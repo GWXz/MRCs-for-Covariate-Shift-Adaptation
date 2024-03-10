@@ -1,0 +1,31 @@
+# Compiled python modules.
+/ezSCUP/__pycache__
+*.pyc
+
+# Setuptools distribution folder.
+/dist/
+
+# Python egg metadata, regenerated from source files by setuptools.
+/*.egg-info
+/*.egg
+
+# Output Files
+#*.png
+!example.png
+*.restart
+*.REF
+*.out
+*.yml
+
+# Output Folders
+/examples/*/output/
+/examples/csv/
+/examples/plots/
+/Pruebas_Methods/
+/Hidden_Folder/
+
+# vim shit
+*.swp
+
+.DS_Store
+.idea
