@@ -4,9 +4,8 @@ from CovShiftGen import CovShiftGen
 
 
 def main():
-    # 引入基于特征的第一主成分的中位数协变量移位
     # For Mac
-    path = 'C:/Users/a/PycharmProjects/dw/MRCs-for-Covariate-Shift-Adaptation-main/'
+    path = '/home/zhengxi/code/MRCs-for-Covariate-Shift-Adaptation-main/'
     add_paths = [
         'Datasets/',
         'Auxiliary_Functions/',
@@ -21,9 +20,9 @@ def main():
 
     from DWGCS import DWGCS
 
-    dataset = np.genfromtxt('C:/Users/a/PycharmProjects/dw/MRCs-for-Covariate-Shift-Adaptation-main/Datasets/Blood.csv',
+    dataset = np.genfromtxt('/home/zhengxi/code/MRCs-for-Covariate-Shift-Adaptation-main/Datasets/Blood.csv',
                             delimiter=',')
-    dataset_normalize = np.genfromtxt('C:/Users/a/PycharmProjects/dw/MRCs-for-Covariate-Shift-Adaptation-main'
+    dataset_normalize = np.genfromtxt('/home/zhengxi/code/MRCs-for-Covariate-Shift-Adaptation-main'
                                       '/Datasets/Blood_normalize.csv', delimiter=',')
     d = dataset_normalize.shape[1]
     X = dataset_normalize[:, :d - 1]
@@ -65,7 +64,10 @@ def main():
     RU_best_Dwgcs = np.min(RU_Dwgcs)
     position = np.argmin(RU_Dwgcs)
     Dwgcs[position] = DWGCS.DWGCS.prediction(Dwgcs[position], xte, yte)
-    error_best_Dwgcs = Dwgcs[position].error
+    error = Dwgcs[position].error
+    auc_Dwgcs = Dwgcs[position].auc
+    print('DWGCS error:', error)
+    print('DWGCS auc:', auc_Dwgcs)
 
 
 if __name__ == '__main__':

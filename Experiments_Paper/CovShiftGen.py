@@ -2,10 +2,9 @@ import numpy as np
 
 
 class CovShiftGen:
-    # 生成协变量位移
     def PCA(dataset_normalize, n=None, t=None):
-        datx = dataset_normalize[:, :-1]  # 不包含目标变量
-        U, S, Vt = np.linalg.svd(datx)  # 降维 特征提取
+        datx = dataset_normalize[:, :-1]
+        U, S, Vt = np.linalg.svd(datx)
         pc = Vt[0, :]
         dat_pca = datx @ pc
         m = np.median(dat_pca)

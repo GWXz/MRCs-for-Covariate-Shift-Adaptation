@@ -4,7 +4,6 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.neighbors import NearestNeighbors
 from Pearson_Corr_Coeffs import PCC
 
-
 def main():
     # For Mac
     path = '/home/zhengxi/code/MRCs-for-Covariate-Shift-Adaptation-main/'
@@ -85,7 +84,10 @@ def main():
     RU_best_Dwgcs = np.min(RU_Dwgcs)
     position = np.argmin(RU_Dwgcs)
     Dwgcs[position] = DWGCS.DWGCS.prediction(Dwgcs[position], xte, yte)
-    error_best_Dwgcs = Dwgcs[position].error
+    error = Dwgcs[position].error
+    auc_Dwgcs = Dwgcs[position].auc
+    print('DWGCS error:', error)
+    print('DWGCS auc:', auc_Dwgcs)
 
 
 if __name__ == '__main__':
