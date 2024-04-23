@@ -4,7 +4,6 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.neighbors import NearestNeighbors
 from Pearson_Corr_Coeffs import PCC
 
-#使用“News20groups”数据集执行实验，该数据集本质上受到协变量移位的影响，因为训练分区和测试分区对应于不同的时间。
 def main():
     # For Mac
     path = '/home/zhengxi/code/MRCs-for-Covariate-Shift-Adaptation-main/'

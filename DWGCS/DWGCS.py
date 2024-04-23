@@ -6,7 +6,6 @@ from Auxiliary_Functions.phi import phi
 from Auxiliary_Functions.powerset import powerset
 
 
-# Softmax 函数
 def softmax(x):
     e_x = np.exp(x - np.max(x))
     return e_x / e_x.sum(axis=0)

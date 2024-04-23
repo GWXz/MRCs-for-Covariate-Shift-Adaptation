@@ -4,7 +4,6 @@ from CovShiftGen import CovShiftGen
 
 
 def main():
-    # 对数据集进行实验，人为地引入基于特征中位数的协变量移位。
     # For Mac
     path = '/home/zhengxi/code/MRCs-for-Covariate-Shift-Adaptation-main/'
     add_paths = [
