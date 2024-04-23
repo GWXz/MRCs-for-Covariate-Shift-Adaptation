@@ -1,14 +1,22 @@
 import numpy as np
 import cvxpy as cvx
 import sklearn as sk
+from sklearn.metrics import roc_auc_score
 from Auxiliary_Functions.phi import phi
 from Auxiliary_Functions.powerset import powerset
+
+
+# Softmax 函数
+def softmax(x):
+    e_x = np.exp(x - np.max(x))
+    return e_x / e_x.sum(axis=0)
 
 
 class DWGCS:
 
     def DWKMM(Mdl, xtr, xte):
-
+        # Calculate the estimated weights α and β
+        # Solve the two-weight kernel mean matching
         n = xtr.shape[0]  # tran
         t = xte.shape[0]  # test
         x = np.concatenate((xtr, xte), axis=0)  # 数组拼接
@@ -51,7 +59,7 @@ class DWGCS:
         return Mdl
 
     def parameters(Mdl, xtr, ytr, xte):
-
+        #Computed vector tau and lambda
         auxtau = []
         n = xtr.shape[0]
         t = xte.shape[0]
@@ -90,6 +98,7 @@ class DWGCS:
         return Mdl
 
     def learning(Mdl, xte):
+        #The double weight method is used to solve the convex MRC optimization problem, and the parameters of the classifier are obtained.
         t = xte.shape[0]
         d = len(Mdl.tau_)
 
@@ -137,19 +146,29 @@ class DWGCS:
         return Mdl
 
     def prediction(Mdl, xte, yte):
+        #Assign labels to instances and give classification errors
         t = xte.shape[0]
         ye = np.zeros((t, 1))
+        ye_score = np.zeros((t, 1))
 
         if Mdl.deterministic == True:
 
             for i in range(t):
+             #prediction label
                 ye[i] = np.argmax(phi(Mdl, xte[i, :], np.arange(1, Mdl.labels + 1)) @ Mdl.mu_) + 1
+             #get score
+                scores= phi(Mdl, xte[i, :], np.arange(1, Mdl.labels + 1)) @ Mdl.mu_
+             #dimensionality reduction: change to probability
+                probabilities = softmax(scores)
+             #new score
+                ye_score[i] = probabilities[1]
+
             Mdl.error = np.count_nonzero(yte != ye) / t
+            Mdl.auc = roc_auc_score(yte, ye_score)
 
         if Mdl.deterministic == False:
 
             Mdl.h = np.zeros((Mdl.labels, t))
-
             if Mdl.loss == '0-1':
                 set = powerset(Mdl.labels)
                 varphi_mux = np.zeros(t)
@@ -169,7 +188,10 @@ class DWGCS:
                             Mdl.alpha_[i] * phi(Mdl, xte[i, :], np.arange(1, Mdl.labels + 1)) @ Mdl.mu_ - varphi_mux[
                                 i] * np.ones((Mdl.labels, 1)), 0) / c)
                     ye[i] = np.random.choice(np.arange(1, Mdl.labels + 1), p=Mdl.h[:, i])
+                    # compute score
+                    ye_score[i] = Mdl.h[1, i]
                 Mdl.error = np.count_nonzero(yte != ye) / t
+                Mdl.auc= roc_auc_score(yte,ye_score)
 
             if Mdl.loss == 'log':
                 for i in range(t):
@@ -179,5 +201,9 @@ class DWGCS:
                                    - np.ones((Mdl.labels, 1)) * Mdl.alpha_[i] * phi(Mdl, xte[i, :],
                                                                                     np.array([j + 1])) @ Mdl.mu_))
                     ye[i] = np.random.choice(np.arange(1, Mdl.labels + 1), p=Mdl.h[:, i])
+                    # compute score
+                    ye_score[i] = Mdl.h[1, i]
                 Mdl.error = np.count_nonzero(yte != ye) / t
+                Mdl.auc = roc_auc_score(yte, ye_score)
         return Mdl
+

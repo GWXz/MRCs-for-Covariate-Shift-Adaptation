@@ -4,9 +4,9 @@ from CovShiftGen import CovShiftGen
 
 
 def main():
-    # 引入基于特征中位数的协变量移位
+    # 对数据集进行实验，人为地引入基于特征中位数的协变量移位。
     # For Mac
-    path = 'C:/Users/a/PycharmProjects/dw/MRCs-for-Covariate-Shift-Adaptation-main/'
+    path = '/home/zhengxi/code/MRCs-for-Covariate-Shift-Adaptation-main/'
     add_paths = [
         '/Users/<username>/cvx'
         'Datasets/',
@@ -61,15 +61,18 @@ def main():
         MdlAux = BaseMdl(False, True, 'linear', 2, 0, '0-1', sigma_)
         MdlAux.D = D[l]
         Dwgcs.append(MdlAux)
-        Dwgcs[l] = DWGCS.DWGCS.DWKMM(Dwgcs[l], xtr, xte)  # 利用双重加权
-        Dwgcs[l] = DWGCS.DWGCS.parameters(Dwgcs[l], xtr, ytr, xte)  # 得到向量
-        Dwgcs[l] = DWGCS.DWGCS.learning(Dwgcs[l], xte)  # 获取分类器参数
+        Dwgcs[l] = DWGCS.DWGCS.DWKMM(Dwgcs[l], xtr, xte)
+        Dwgcs[l] = DWGCS.DWGCS.parameters(Dwgcs[l], xtr, ytr, xte)
+        Dwgcs[l] = DWGCS.DWGCS.learning(Dwgcs[l], xte)
         RU_Dwgcs[l] = Dwgcs[l].RU
 
     RU_best_Dwgcs = np.min(RU_Dwgcs)
     position = np.argmin(RU_Dwgcs)
     Dwgcs[position] = DWGCS.DWGCS.prediction(Dwgcs[position], xte, yte)  # 预测并给出误差
-    error_best_Dwgcs = Dwgcs[position].error
+    error = Dwgcs[position].error
+    auc_Dwgcs = Dwgcs[position].auc
+    print('DWGCS error:',error)
+    print('DWGCS auc:',auc_Dwgcs)
 
 
 if __name__ == '__main__':
